@@ -1,4 +1,4 @@
-## ETP REO BIOTECH
+## ETP REO
 
 Для установки зависимостей:
 
