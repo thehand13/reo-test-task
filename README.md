@@ -1,4 +1,4 @@
-## MID BIOTECH
+## ETP REO BIOTECH
 
 Для установки зависимостей:
 
