@@ -1,7 +1,7 @@
 import React from 'react';
 
 import './App.css';
-import Cart from './components/Cart';
+import Cart from './components/Cart/Cart';
 
 function App() {
   return (

@@ -1,8 +1,8 @@
 interface CartData {
   id: string;
   dealType: string;
-  beginDate: Date;
-  endDate: Date;
+  beginDate: string;
+  endDate: string;
   number: string;
   vatIncluded: false;
   participants: {
@@ -10,8 +10,8 @@ interface CartData {
   };
   item: {
     id: string;
-    totalPrice: 340000;
-    price: 10000;
+    totalPrice: number;
+    price: number;
     measurementUnit: string;
     category: string;
     group: string;

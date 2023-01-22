@@ -1,18 +1,17 @@
-import dayjs from 'dayjs';
 import React, { useState, useEffect } from 'react';
-import CartData from '../models/cart-data';
+import CartData from '../../models/cart-data';
 import classes from './Cart.module.css';
-import CalendarIcon from './icons/CalendarIcon';
-import DealTypeIcon from './icons/DealTypeIcon';
-import MeasurementUnitIcon from './icons/MeasurementUnitIcon';
-import PriceIcon from './icons/PriceIcon';
-import QuantityIcon from './icons/QuantityIcon';
+import CalendarIcon from '../icons/CalendarIcon';
+import DealTypeIcon from '../icons/DealTypeIcon';
+import MeasurementUnitIcon from '../icons/MeasurementUnitIcon';
+import PriceIcon from '../icons/PriceIcon';
+import QuantityIcon from '../icons/QuantityIcon';
 
 const initialCartState: CartData = {
   id: '',
   dealType: '',
-  beginDate: new Date(),
-  endDate: new Date(),
+  beginDate: '',
+  endDate: '',
   number: '',
   vatIncluded: false,
   participants: {
@@ -20,8 +19,8 @@ const initialCartState: CartData = {
   },
   item: {
     id: '',
-    totalPrice: 340000,
-    price: 10000,
+    totalPrice: 0,
+    price: 0,
     measurementUnit: '',
     category: '',
     group: '',
@@ -34,55 +33,36 @@ const initialCartState: CartData = {
 };
 
 const Cart = () => {
-  const [cartInfoState, setCartInfoState] = useState(initialCartState);
-  const [beginDateState, setBeginDateState] = useState('');
-  const [endDateState, setEndDateState] = useState('');
-
+  const [componentState, setCartInfoState] = useState({
+    cartObjectState: initialCartState,
+    beginDateState: '',
+    endDateState: '',
+  });
   useEffect(() => {
-    (async () => {
-      const fetchData = await fetch(
-        'https://reo-tesk-task-default-rtdb.europe-west1.firebasedatabase.app/lots/best.json'
-      );
-      if (fetchData.ok) {
-        const responseData = await fetchData.json();
-        const newCartInfoState: CartData = {
-          id: responseData.id,
-          dealType: responseData.dealType,
-          beginDate: new Date(responseData.beginDate),
-          endDate: new Date(responseData.endDate),
-          number: responseData.number,
-          vatIncluded: responseData.vatIncluded,
-          participants: {
-            count: responseData.participants.count,
-          },
-          item: {
-            id: responseData.item.id,
-            totalPrice: responseData.item.totalPrice,
-            price: responseData.item.price,
-            measurementUnit: responseData.item.measurementUnit,
-            category: responseData.item.category,
-            group: responseData.item.group,
-            mark: responseData.item.mark,
-            quantity: responseData.item.quantity,
-            description: responseData.item.description,
-          },
-          location: responseData.location,
-          distance: responseData.distance,
-        };
-        dayjs().locale('ru');
-        setCartInfoState(() => newCartInfoState);
-        setBeginDateState(
-          new Intl.DateTimeFormat('ru', {
-            dateStyle: 'long',
-          }).format(newCartInfoState.beginDate)
+    try {
+      (async () => {
+        const fetchData = await fetch(
+          'https://reo-tesk-task-default-rtdb.europe-west1.firebasedatabase.app/lots/best.json'
         );
-        setEndDateState(
-          new Intl.DateTimeFormat('ru', {
+        if (fetchData.ok) {
+          const responseData = await fetchData.json();
+          const newCartInfoState: CartData = structuredClone(responseData);
+          const newBeginDateState: string = new Intl.DateTimeFormat('ru', {
             dateStyle: 'long',
-          }).format(newCartInfoState.endDate)
-        );
-      }
-    })();
+          }).format(new Date(newCartInfoState.beginDate));
+          const newEndDateState: string = new Intl.DateTimeFormat('ru', {
+            dateStyle: 'long',
+          }).format(new Date(newCartInfoState.endDate));
+          setCartInfoState({
+            cartObjectState: newCartInfoState,
+            beginDateState: newBeginDateState,
+            endDateState: newEndDateState,
+          });
+        }
+      })();
+    } catch (error) {
+      console.log(error);
+    }
   }, []);
   return (
     <div className={classes.cart}>
@@ -90,28 +70,31 @@ const Cart = () => {
         <div>
           <DealTypeIcon />
           <div className={classes['cart-section-dealType']}>
-            {cartInfoState.dealType}
+            {componentState.cartObjectState.dealType}
           </div>
         </div>
         <div className={classes['cart-section-number']}>
-          № {cartInfoState.number}
+          № {componentState.cartObjectState.number}
         </div>
         <div className={classes['cart-section-category']}>
-          {cartInfoState.item.category}/{cartInfoState.item.group}
+          {componentState.cartObjectState.item.category}/
+          {componentState.cartObjectState.item.group}
         </div>
         <div className={classes['cart-section-description']}>
-          {cartInfoState.item.description}
+          {componentState.cartObjectState.item.description}
         </div>
         <div>
           <div className={classes['cart-section-totalPrice']}>
-            {cartInfoState.item.totalPrice} ₽
+            {componentState.cartObjectState.item.totalPrice} ₽
           </div>
           <div className={classes['cart-section-nds']}>Без НДС</div>
         </div>
         <div>
           <div className={classes['cart-section-location-icon']}>icon</div>
           <div className={classes['cart-section-location-info']}></div>
-          {!cartInfoState.location ? 'не определено' : cartInfoState.location}
+          {!componentState.cartObjectState.location
+            ? 'не определено'
+            : componentState.cartObjectState.location}
         </div>
       </section>
 
@@ -122,7 +105,7 @@ const Cart = () => {
 
             <div className={classes['cart-section-info']}>
               <QuantityIcon />
-              {cartInfoState.item.quantity}
+              {componentState.cartObjectState.item.quantity}
             </div>
           </div>
           <div>
@@ -131,7 +114,7 @@ const Cart = () => {
             </div>
             <div className={classes['cart-section-info']}>
               <MeasurementUnitIcon />
-              {cartInfoState.item.measurementUnit}
+              {componentState.cartObjectState.item.measurementUnit}
             </div>
           </div>
           <div>
@@ -140,7 +123,7 @@ const Cart = () => {
             </div>
             <div className={classes['cart-section-info']}>
               <PriceIcon />
-              {cartInfoState.item.price} ₽
+              {componentState.cartObjectState.item.price} ₽
             </div>
           </div>
         </section>
@@ -152,7 +135,7 @@ const Cart = () => {
             </div>
             <div className={classes['cart-section-info']}>
               <CalendarIcon />
-              {beginDateState}
+              {componentState.beginDateState}
             </div>
           </div>
           <div>
@@ -161,13 +144,13 @@ const Cart = () => {
             </div>
             <div className={classes['cart-section-info']}>
               <CalendarIcon />
-              {endDateState}
+              {componentState.endDateState}
             </div>
           </div>
           <div>
             <div className={classes['cart-section-header']}>Участников</div>
             <div className={classes['cart-section-info']}>
-              {cartInfoState.participants.count}
+              {componentState.cartObjectState.participants.count}
             </div>
           </div>
         </section>
