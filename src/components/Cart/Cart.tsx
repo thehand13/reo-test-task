@@ -1,11 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import CartData from '../../models/cart-data';
 import classes from './Cart.module.css';
-import CalendarIcon from '../icons/CalendarIcon';
-import DealTypeIcon from '../icons/DealTypeIcon';
-import MeasurementUnitIcon from '../icons/MeasurementUnitIcon';
-import PriceIcon from '../icons/PriceIcon';
-import QuantityIcon from '../icons/QuantityIcon';
+
+import CartMainSection from './CartMainSection';
+import CartAdditionalSection from './CartAdditionalSection';
 
 const initialCartState: CartData = {
   id: '',
@@ -66,95 +64,8 @@ const Cart = () => {
   }, []);
   return (
     <div className={classes.cart}>
-      <section className={classes['cart-section-main']}>
-        <div>
-          <DealTypeIcon />
-          <div className={classes['cart-section-dealType']}>
-            {componentState.cartObjectState.dealType}
-          </div>
-        </div>
-        <div className={classes['cart-section-number']}>
-          № {componentState.cartObjectState.number}
-        </div>
-        <div className={classes['cart-section-category']}>
-          {componentState.cartObjectState.item.category}/
-          {componentState.cartObjectState.item.group}
-        </div>
-        <div className={classes['cart-section-description']}>
-          {componentState.cartObjectState.item.description}
-        </div>
-        <div>
-          <div className={classes['cart-section-totalPrice']}>
-            {componentState.cartObjectState.item.totalPrice} ₽
-          </div>
-          <div className={classes['cart-section-nds']}>Без НДС</div>
-        </div>
-        <div>
-          <div className={classes['cart-section-location-icon']}>icon</div>
-          <div className={classes['cart-section-location-info']}></div>
-          {!componentState.cartObjectState.location
-            ? 'не определено'
-            : componentState.cartObjectState.location}
-        </div>
-      </section>
-
-      <section className={classes['cart-section-additional']}>
-        <section className={classes['cart-section-additional-one']}>
-          <div>
-            <div className={classes['cart-section-header']}>Количество</div>
-
-            <div className={classes['cart-section-info']}>
-              <QuantityIcon />
-              {componentState.cartObjectState.item.quantity}
-            </div>
-          </div>
-          <div>
-            <div className={classes['cart-section-header']}>
-              Еденицы измерения
-            </div>
-            <div className={classes['cart-section-info']}>
-              <MeasurementUnitIcon />
-              {componentState.cartObjectState.item.measurementUnit}
-            </div>
-          </div>
-          <div>
-            <div className={classes['cart-section-header']}>
-              Стоимость за единицу измерения
-            </div>
-            <div className={classes['cart-section-info']}>
-              <PriceIcon />
-              {componentState.cartObjectState.item.price} ₽
-            </div>
-          </div>
-        </section>
-
-        <section className={classes['cart-section-additional-two']}>
-          <div>
-            <div className={classes['cart-section-header']}>
-              Начало сбора предложений
-            </div>
-            <div className={classes['cart-section-info']}>
-              <CalendarIcon />
-              {componentState.beginDateState}
-            </div>
-          </div>
-          <div>
-            <div className={classes['cart-section-header']}>
-              Окончание сбора предложений
-            </div>
-            <div className={classes['cart-section-info']}>
-              <CalendarIcon />
-              {componentState.endDateState}
-            </div>
-          </div>
-          <div>
-            <div className={classes['cart-section-header']}>Участников</div>
-            <div className={classes['cart-section-info']}>
-              {componentState.cartObjectState.participants.count}
-            </div>
-          </div>
-        </section>
-      </section>
+      <CartMainSection cartInfo={componentState} />
+      <CartAdditionalSection cartInfo={componentState} />
     </div>
   );
 };
