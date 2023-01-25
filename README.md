@@ -1,4 +1,4 @@
-## ETP REO
+## ETP REO (React, Typescript)
 
 Для установки зависимостей:
 
